@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>在线题库</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>📝 在线题库</h1>
+
+    <div class="controls">
+      <input type="text" id="searchInput" placeholder="🔍 搜索题目关键词或题号..." />
+      <select id="typeFilter">
+        <option value="all">全部类型</option>
+        <option value="选择">选择题</option>
+        <option value="判断">判断题</option>
+      </select>
+    </div>
+
+    <div id="questionList" class="question-list">
+      <!-- 题目将通过 JS 动态插入 -->
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
