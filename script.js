@@ -10,6 +10,19 @@ fetch('data.json')
     console.error(err);
   });
 
+// 格式化题目文本：自动为选择题的选项换行
+function formatQuestionText(text, type) {
+  if (type !== '选择') {
+    return text; // 判断题原样返回
+  }
+
+  // 处理常见格式：在 A. B. C. D. 前插入 <br>
+  return text
+    .replace(/([。？！\)])\s*([A-D]\.)/g, '$1<br>$2') // 句尾后接选项
+    .replace(/([A-D]\.)/g, '<br>$1')                 // 所有 A. B. C. D. 前加 <br>
+    .replace(/^<br>/, '');                           // 移除开头多余的 <br>
+}
+
 function renderQuestions(questions) {
   const container = document.getElementById('questionList');
   if (questions.length === 0) {
@@ -17,21 +30,24 @@ function renderQuestions(questions) {
     return;
   }
 
-  const html = questions.map(q => `
-    <div class="question-card" data-type="${q.类型}" data-text="${q.题目}">
-      <div class="question-header">
-        <span>第${q.题号}题</span>
-        <span class="type-tag">${q.类型}</span>
+  const html = questions.map(q => {
+    const formattedText = formatQuestionText(q.题目, q.类型);
+    return `
+      <div class="question-card" data-type="${q.类型}" data-text="${q.题目}">
+        <div class="question-header">
+          <span>第${q.题号}题</span>
+          <span class="type-tag">${q.类型}</span>
+        </div>
+        <div class="question-text">${formattedText}</div>
+        <div class="answer">✅ 正确答案：<strong>${q.标准答案}</strong></div>
+        <button class="toggle-btn">显示/隐藏答案</button>
       </div>
-      <div class="question-text">${q.题目}</div>
-      <div class="answer">✅ 正确答案：<strong>${q.标准答案}</strong></div>
-      <button class="toggle-btn">显示/隐藏答案</button>
-    </div>
-  `).join('');
+    `;
+  }).join('');
 
   container.innerHTML = html;
 
-  // 绑定按钮事件（使用事件委托）
+  // 事件委托：处理“显示/隐藏答案”按钮
   container.addEventListener('click', (e) => {
     if (e.target.classList.contains('toggle-btn')) {
       const card = e.target.closest('.question-card');
